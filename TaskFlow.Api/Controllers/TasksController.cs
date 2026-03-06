@@ -61,23 +61,30 @@ public class TasksController : ControllerBase
   }
 
   [HttpPut("{id}")]
-  public async Task<ActionResult> UpdateTaskById([FromBody] CreateTaskDto dto, Guid id)
+  public async Task<ActionResult> UpdateTask(Guid id, [FromBody] CreateTaskDto dto)
   {
-    var task = _taskRepository.GetByIdAsync(id);
+    var task = await _taskRepository.GetByIdAsync(id);
     if (task == null)
     {
-      return NotFound(new {message = "Not found."});
+      return NotFound(new { message = "Task not found." });
     }
 
-    if (!Enum.TryParse<TaskStatus>(dto.Status, true, out var status)) return BadRequest();
-    var newTask = new TaskItem
+    task.Title = dto.Title;
+    task.Description = dto.Description;
+
+    if (Enum.TryParse<TaskStatus>(dto.Status, true, out var parsedStatus))
     {
-      Title = dto.Title,
-      Description = dto.Description,
-      Status = status
-    };
-    await _taskRepository.UpdateAsync(newTask);
-    return CreatedAtAction(nameof(GetTaskById), new { id = task.Id }, task);
+      task.Status = parsedStatus;
+    }
+    else
+    {
+      return BadRequest(new { message = "Invalid status value." });
+    }
+
+  
+    await _taskRepository.UpdateAsync(task);
+
+    return NoContent(); 
   }
 
   [HttpDelete("{id}")]
