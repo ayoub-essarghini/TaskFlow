@@ -37,6 +37,10 @@ public class ApplicationDbContext : DbContext
            .WithOne(u => u.Team)
            .HasForeignKey(u => u.TeamId);
        
+       // Configure User.Role enum to be stored as string in database
+       modelBuilder.Entity<User>()
+           .Property(u => u.Role)
+           .HasConversion<string>();
       
     }
 }

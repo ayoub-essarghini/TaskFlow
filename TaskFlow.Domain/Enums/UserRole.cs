@@ -1,6 +1,6 @@
 namespace TaskFlow.Domain.Enums;
 
-public enum UserRole
+public enum Role
 {
     Admin,
     Manager,

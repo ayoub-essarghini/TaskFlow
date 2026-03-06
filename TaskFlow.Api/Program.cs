@@ -1,8 +1,10 @@
 
 using Microsoft.EntityFrameworkCore;
 using TaskFlow.Application.Interfaces;
+using TaskFlow.Domain;
 using TaskFlow.Infrastructure.Data;
 using TaskFlow.Infrastructure.Repositories;
+using TaskFlow.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql
 
 //Register Dependency Injection
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddScoped<IIdentityService, IdentityService>();
 
 
 var app = builder.Build();
