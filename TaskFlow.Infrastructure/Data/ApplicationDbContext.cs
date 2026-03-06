@@ -5,19 +5,38 @@ namespace TaskFlow.Infrastructure.Data;
 
 public class ApplicationDbContext : DbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-        
-    }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
     
     public DbSet<TaskItem> Tasks { get; set; }
+    public DbSet<Project> Projects { get; set; }
+    public DbSet<Team> Teams { get; set; }
+    public DbSet<User> Users { get; set; }
+  
+ 
+    
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
        base.OnModelCreating(modelBuilder);
        
-       modelBuilder.Entity<TaskItem>().ToTable("tasks");
-       modelBuilder.Entity<TaskItem>().HasKey(x => x.Id);
-       modelBuilder.Entity<TaskItem>().Property(t => t.Title).IsRequired().HasMaxLength(200);
+       // Team -> Projects (One-to-Many)
+       modelBuilder.Entity<Team>()
+           .HasMany(t => t.Projects)
+           .WithOne(p => p.Team)
+           .HasForeignKey(p => p.TeamId);
+
+       // Project -> Tasks (One-to-Many)
+       modelBuilder.Entity<Project>()
+           .HasMany(p => p.Tasks)
+           .WithOne(t => t.Project)
+           .HasForeignKey(t => t.ProjectId);
+
+       // Team -> Users (One-to-Many)
+       modelBuilder.Entity<Team>()
+           .HasMany(t => t.Members)
+           .WithOne(u => u.Team)
+           .HasForeignKey(u => u.TeamId);
+       
+      
     }
 }

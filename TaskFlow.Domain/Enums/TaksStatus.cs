@@ -1,6 +1,6 @@
 namespace TaskFlow.Domain.Enums;
 
-public enum TaksStatus
+public enum TaskStatus
 {
     Todo,
     InProgress,
